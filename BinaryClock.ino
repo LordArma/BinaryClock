@@ -51,8 +51,6 @@ DS3231  rtc(SDA, SCL);
 long ymd_out[3];
 int intDelay = 1000;
 Time  t;
-int BH = 0;
-int BM = 0;
 
 void showTime(){
   t = rtc.getTime();
@@ -63,15 +61,27 @@ void showTime(){
   int newH = h;
   int newM = m;
 
-  int valBH = digitalRead(BH);
-  int valBM = digitalRead(BM);
+  int valBH = digitalRead(14);
+  int valBM = digitalRead(15);
 
   if (valBH == HIGH){
+    Serial.print("valBH is HIGH: ");
+    Serial.println(valBH);
     newH++;
+  }
+  else{
+    Serial.print("valBH is LOW: ");
+    Serial.println(valBH);
   }
 
   if (valBM == HIGH){
+    Serial.print("valBM is HIGH: ");
+    Serial.println(valBM);
     newM++;
+  }
+  else{
+    Serial.print("valBM is LOW: ");
+    Serial.println(valBM);
   }
 
 
@@ -80,6 +90,9 @@ void showTime(){
     if (newH > 23) newH = 1;
     if (newM > 59) newM = 1;
     rtc.setTime(newH, newM, 0);
+
+    h = newH;
+    m = newM;
   }
 
   if (h > 12){
@@ -143,7 +156,6 @@ void showTime(){
     digitalWrite(7, HIGH);
   }
 
-
   if (mi[3] == 1){
     digitalWrite(8, LOW);
   }
@@ -171,7 +183,6 @@ void showTime(){
   else{
     digitalWrite(16, HIGH);
   }
-
   
   Serial.print(hr[0]);
   Serial.print(hr[1]);
@@ -190,6 +201,7 @@ void setup() {
   rtc.begin();
   Serial.begin(115200);
   Serial.println("Start");
+  
   pinMode(4, OUTPUT);
   pinMode(5, OUTPUT);
   pinMode(6, OUTPUT);
@@ -199,8 +211,9 @@ void setup() {
   pinMode(10, OUTPUT);
   pinMode(16, OUTPUT);
 
-  pinMode(BH, INPUT);
-  pinMode(BM, INPUT);
+  pinMode(A0, OUTPUT);
+  pinMode(14, INPUT);       
+  pinMode(15, INPUT);
   
   digitalWrite(4, HIGH);
   digitalWrite(5, HIGH);
@@ -210,6 +223,8 @@ void setup() {
   digitalWrite(9, HIGH);
   digitalWrite(10, HIGH);
   digitalWrite(16, HIGH);
+
+  digitalWrite(A0, HIGH);
 
   delay(intDelay);
 }
